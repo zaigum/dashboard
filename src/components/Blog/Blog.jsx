@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-// Import Ant Design components and styles
 import {
   Input,
   message,
@@ -8,17 +7,13 @@ import {
   Typography,
   Layout,
 } from "antd";
-
-// Re-import icons from react-icons for the buttons
 import {
   RiDeleteBinLine,
   RiSendPlane2Line,
   RiDownload2Line,
   RiEyeLine,
 } from "react-icons/ri";
-import { AiOutlineClose } from "react-icons/ai"; // Keep the modal close icon
-
-// Keep your existing components for the editor and PDF
+import { AiOutlineClose } from "react-icons/ai";
 import { Editor } from "@tinymce/tinymce-react";
 import { PDFViewer } from "@react-pdf/renderer";
 import PDFDocument from "./PDFDocument";
@@ -42,7 +37,6 @@ const Blog = ({ updateBlogs }) => {
 
   const handlePreview = () => {
     if (!title || !content) {
-      // Use Ant Design message for notifications
       message.error("Please enter title and content before previewing.");
       return;
     }
@@ -62,7 +56,6 @@ const Blog = ({ updateBlogs }) => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Blog Preview</title>
         <style>
-            /* Basic styling for the preview */
             body { line-height: 1.6; padding: 20px; margin: 0; }
             .container { max-width: 900px; margin: 0 auto; padding: 32px; background-color: #fff; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border-radius: 8px; }
             .title { font-size: 2.25rem; font-weight: bold; margin-bottom: 1rem; }
@@ -155,11 +148,9 @@ const Blog = ({ updateBlogs }) => {
   return (
     <Layout className="site-layout" style={{ padding: "16px" }}>
       <Content>
-        {/* Header with action buttons */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
           <Title level={4} style={{ margin: 0 }}>New Blog Entry</Title>
           <Space>
-            {/* Tailwind CSS Buttons */}
             <button
               onClick={handlePDFDownload}
               className="bg-gray-300 hover:bg-gray-400 mr-2 text-gray-800 px-3 py-2 text-xs rounded-full flex items-center sm:text-sm"
@@ -187,7 +178,6 @@ const Blog = ({ updateBlogs }) => {
           </Space>
         </div>
 
-        {/* Content Box */}
         <div style={{ padding: "24px", background: "#fff", borderRadius: "8px", boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px" }}>
           <div style={{ marginBottom: "16px" }}>
             <Paragraph type="secondary" style={{ marginBottom: "4px" }}>Title</Paragraph>
@@ -221,7 +211,6 @@ const Blog = ({ updateBlogs }) => {
         </div>
       </Content>
 
-      {/* Ant Design Modal for PDF Preview */}
       <Modal
         title="PDF Preview"
         open={showPDFPreview}
