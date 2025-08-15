@@ -2,18 +2,12 @@ import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import {
   FaChartLine,
-  FaBoxes,
-  FaBuilding,
   FaUser,
   FaCog,
-  FaSignInAlt,
-  FaUserPlus,
-  FaExclamationTriangle,
   FaTimes,
-  FaChevronUp,
-  FaChevronDown,
   FaBlog,
   FaEye,
+  FaChevronDown,
 } from "react-icons/fa";
 import logo from "../assets/logo.png";
 
@@ -23,9 +17,15 @@ const Sidebar = ({
   setSelectedMenuItem,
   selectedMenuItem,
 }) => {
+  const [isAnalyticsDropdownOpen, setAnalyticsDropdownOpen] = useState(false);
+
   const handleMenuItemClick = (menuItem) => {
     setSelectedMenuItem(menuItem);
     localStorage.setItem("selectedMenuItem", menuItem);
+  };
+
+  const handleAnalyticsDropdown = () => {
+    setAnalyticsDropdownOpen(!isAnalyticsDropdownOpen);
   };
 
   useEffect(() => {
@@ -33,114 +33,138 @@ const Sidebar = ({
     if (storedMenuItem) {
       setSelectedMenuItem(storedMenuItem);
     }
-  }, []);
+  }, [setSelectedMenuItem]);
 
   return (
     <div
-      className={`bg-gray-950 text-white border-r	  h-full w-64 fixed top-0 left-0 z-50 transition-all duration-300 ${
-        isOpen ? "translate-x-0" : "-translate-x-full"
-      }`}
+      className={`bg-gray-800 text-white h-full w-64 fixed top-0 left-0 z-50 transform transition-transform duration-300 ${
+        isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+      } shadow-lg`}
     >
-      <div className="p-3 flex justify-between items-center">
-        <img src={logo} alt="Logo" className="w-14 h-14 mr-2 rounded-full" />
+      {/* Sidebar Header */}
+      <div className="flex items-center justify-between p-4 border-b border-gray-700">
+        <div className="flex items-center">
+          <img src={logo} alt="Logo" className="w-9 h-9 mr-3 rounded-full" />
+          <span className="text-xl font-bold">DashLite</span>
+        </div>
         <button
-          className="text-gray-300 hover:text-white px-2 py-2 rounded transition duration-300 focus:outline-none"
+          className="text-gray-400 hover:text-white lg:hidden"
           onClick={toggleSidebar}
         >
-          <FaTimes />
+          <FaTimes className="h-5 w-5" />
         </button>
       </div>
-      <div className="border-stone-200 rounded-xl ml-4 mr-4 bg-gray-800 relative">
-        <div className="p-4">
-          <h1 className="font-bold text-white">Analytics</h1>
-          <p className="text-gray-200 text-sm">Production</p>
-        </div>
-        <div className="absolute top-1/2 transform -translate-y-1/2 right-4">
-          <FaChevronUp className="text-gray-600 text-sm cursor-pointer" />
-          <FaChevronDown className="text-gray-600 text-sm cursor-pointer" />
-        </div>
-      </div>
-      <div className="border-t mt-4 border-gray-700"></div>
-      <nav className="mt-4 flex-1">
-        <ul>
-          <li className="  p-2">
-            <NavLink
-              to="/blog-write"
-              onClick={() => handleMenuItemClick("Blog")}
-              className={`flex items-center px-4 py-2 rounded transition duration-300 ${
-                selectedMenuItem === "Blog"
-                  ? "text-white font-bold bg-gray-700"
-                  : "text-gray-300 hover:text-white"
-              }`}
-              activeClassName="text-white font-bold bg-gray-700"
-            >
-              <FaBlog className="mr-3" />
-              <span className="text-sm">Blog Write</span>
-            </NavLink>
-          </li>
-          <li className="  p-2">
-            <NavLink
-              to="/blog-preview"
-              onClick={() => handleMenuItemClick("BlogList")}
-              className={`flex items-center px-4 py-2 rounded transition duration-300 ${
-                selectedMenuItem === "BlogList"
-                  ? "text-white font-bold bg-gray-700"
-                  : "text-gray-300 hover:text-white"
-              }`}
-              activeClassName="text-white font-bold bg-gray-700"
-            >
-              <FaEye className="mr-3" />
-              <span className="text-sm"> Blog Preview</span>
-            </NavLink>
-          </li>
 
-          <li className="  p-2">
+      {/* Analytics Dropdown Section */}
+      <div className="p-4">
+        <div
+          className="flex items-center justify-between p-3 bg-gray-700 rounded-md cursor-pointer transition-colors duration-200 hover:bg-gray-600"
+          onClick={handleAnalyticsDropdown}
+        >
+          <div>
+            <h1 className="font-semibold text-white">Analytics</h1>
+            <p className="text-sm text-gray-400">Production</p>
+          </div>
+          <FaChevronDown
+            className={`text-gray-400 transform transition-transform duration-300 ${
+              isAnalyticsDropdownOpen ? "rotate-180" : ""
+            }`}
+          />
+        </div>
+        {isAnalyticsDropdownOpen && (
+          <div className="mt-2 bg-gray-700 rounded-md shadow-inner">
+            <ul className="py-2">
+              <li className="px-4 py-2 text-sm text-gray-300 hover:bg-gray-600 cursor-pointer transition-colors duration-200">
+                Development
+              </li>
+              <li className="px-4 py-2 text-sm text-gray-300 hover:bg-gray-600 cursor-pointer transition-colors duration-200">
+                Staging
+              </li>
+            </ul>
+          </div>
+        )}
+      </div>
+
+      {/* Navigation Links */}
+      <nav className="mt-4 px-4">
+        <ul className="space-y-2">
+          <li>
             <NavLink
               to="/overview"
               onClick={() => handleMenuItemClick("Overview")}
-              className={`flex items-center px-4 py-2 rounded transition duration-300 ${
+              className={`flex items-center px-4 py-2 rounded-md transition-colors duration-200 ${
                 selectedMenuItem === "Overview"
-                  ? "text-white font-bold bg-gray-700"
-                  : "text-gray-300 hover:text-white"
+                  ? "bg-gray-700 text-white font-semibold"
+                  : "text-gray-300 hover:bg-gray-700 hover:text-white"
               }`}
-              activeClassName="text-white font-bold bg-gray-700"
             >
-              <FaChartLine className="mr-3" />
-              <span className="text-sm">Overview</span>
+              <FaChartLine className="mr-3 w-4 h-4" />
+              <span>Overview</span>
             </NavLink>
           </li>
-
-          <li className="  p-2">
+          <li>
             <NavLink
-              to="/account"
-              onClick={() => handleMenuItemClick("Account")}
-              className={`flex items-center px-4 py-2 rounded transition duration-300 ${
-                selectedMenuItem === "Account"
-                  ? "text-white font-bold bg-gray-700"
-                  : "text-gray-300 hover:text-white"
+              to="/blog-write"
+              onClick={() => handleMenuItemClick("Blog")}
+              className={`flex items-center px-4 py-2 rounded-md transition-colors duration-200 ${
+                selectedMenuItem === "Blog"
+                  ? "bg-gray-700 text-white font-semibold"
+                  : "text-gray-300 hover:bg-gray-700 hover:text-white"
               }`}
-              activeClassName="text-white font-bold bg-gray-700"
             >
-              <FaUser className="mr-3" />
-              <span className="text-sm">Account</span>
+              <FaBlog className="mr-3 w-4 h-4" />
+              <span>Blog Write</span>
             </NavLink>
           </li>
-          <li className="  p-2">
+          <li>
             <NavLink
-              to="/settings"
-              onClick={() => handleMenuItemClick("Settings")}
-              className={`flex items-center px-4 py-2 rounded transition duration-300 ${
-                selectedMenuItem === "Settings"
-                  ? "text-white font-bold bg-gray-700"
-                  : "text-gray-300 hover:text-white"
+              to="/blog-preview"
+              onClick={() => handleMenuItemClick("BlogList")}
+              className={`flex items-center px-4 py-2 rounded-md transition-colors duration-200 ${
+                selectedMenuItem === "BlogList"
+                  ? "bg-gray-700 text-white font-semibold"
+                  : "text-gray-300 hover:bg-gray-700 hover:text-white"
               }`}
-              activeClassName="text-white font-bold bg-gray-700"
             >
-              <FaCog className="mr-3" />
-              <span className="text-sm">Settings</span>
+              <FaEye className="mr-3 w-4 h-4" />
+              <span>Blog Preview</span>
             </NavLink>
           </li>
         </ul>
+
+        {/* Separator and Bottom Links */}
+        <div className="mt-6 border-t border-gray-700 pt-6">
+          <ul className="space-y-2">
+            <li>
+              <NavLink
+                to="/account"
+                onClick={() => handleMenuItemClick("Account")}
+                className={`flex items-center px-4 py-2 rounded-md transition-colors duration-200 ${
+                  selectedMenuItem === "Account"
+                    ? "bg-gray-700 text-white font-semibold"
+                    : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                }`}
+              >
+                <FaUser className="mr-3 w-4 h-4" />
+                <span>Account</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/settings"
+                onClick={() => handleMenuItemClick("Settings")}
+                className={`flex items-center px-4 py-2 rounded-md transition-colors duration-200 ${
+                  selectedMenuItem === "Settings"
+                    ? "bg-gray-700 text-white font-semibold"
+                    : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                }`}
+              >
+                <FaCog className="mr-3 w-4 h-4" />
+                <span>Settings</span>
+              </NavLink>
+            </li>
+          </ul>
+        </div>
       </nav>
     </div>
   );
