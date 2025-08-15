@@ -1,36 +1,36 @@
 import React, { useState, useEffect } from "react";
-import { Editor } from "@tinymce/tinymce-react";
+// Import Ant Design components and styles
+import {
+  Input,
+  message,
+  Modal,
+  Space,
+  Typography,
+  Layout,
+} from "antd";
+
+// Re-import icons from react-icons for the buttons
 import {
   RiDeleteBinLine,
   RiSendPlane2Line,
   RiDownload2Line,
+  RiEyeLine,
 } from "react-icons/ri";
-import { RiEyeLine } from "react-icons/ri";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { PDFViewer } from "@react-pdf/renderer"; // Import PDFViewer from react-pdf/renderer
-import PDFDocument from "./PDFDocument"; // Import your PDFDocument component
-import jsPDF from "jspdf";
-import { AiOutlineClose } from "react-icons/ai"; // Import the AiOutlineClose icon
+import { AiOutlineClose } from "react-icons/ai"; // Keep the modal close icon
+
+// Keep your existing components for the editor and PDF
+import { Editor } from "@tinymce/tinymce-react";
+import { PDFViewer } from "@react-pdf/renderer";
+import PDFDocument from "./PDFDocument";
+
+const { Content } = Layout;
+const { Title, Paragraph } = Typography;
 
 const Blog = ({ updateBlogs }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [charCount, setCharCount] = useState(0);
-  const [wordCount, setWordCount] = useState(0);
   const [showPDFPreview, setShowPDFPreview] = useState(false);
-  const [imageData, setImageData] = useState(""); // Define imageData state
-
-  useEffect(() => {
-    countCharactersAndWords();
-  }, [content]);
-
-  const countCharactersAndWords = () => {
-    const text = content.replace(/(<([^>]+)>)/gi, "");
-    const words = text.trim().split(/\s+/);
-    setCharCount(text.length);
-    setWordCount(words.length);
-  };
+  const [imageData, setImageData] = useState("");
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
@@ -42,16 +42,18 @@ const Blog = ({ updateBlogs }) => {
 
   const handlePreview = () => {
     if (!title || !content) {
-      toast.error("Please enter title and content before previewing.");
+      // Use Ant Design message for notifications
+      message.error("Please enter title and content before previewing.");
       return;
     }
-  
+
     const currentDate = new Date().toLocaleDateString("en-US", {
       weekday: "long",
       year: "numeric",
       month: "long",
       day: "numeric",
     });
+
     const previewHTML = `
       <!DOCTYPE html>
       <html lang="en">
@@ -59,76 +61,58 @@ const Blog = ({ updateBlogs }) => {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Blog Preview</title>
-        <link href="https://fonts.googleapis.com/css2?family=Roxie+Rossa&display=swap" rel="stylesheet">
-        <!-- Include Tailwind CSS CDN -->
-        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
         <style>
-          body {
-             line-height: 1.6;
-            background-image: url('https://unsplash.com/photos/muOHbrFGEQY/download?force=true');
-            background-size: cover;
-            background-position: center;
-            padding: 20px;
-            margin: 0;
-          }
+            /* Basic styling for the preview */
+            body { line-height: 1.6; padding: 20px; margin: 0; }
+            .container { max-width: 900px; margin: 0 auto; padding: 32px; background-color: #fff; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border-radius: 8px; }
+            .title { font-size: 2.25rem; font-weight: bold; margin-bottom: 1rem; }
+            .date { font-size: 0.875rem; color: #6b7280; margin-bottom: 2rem; }
+            .content { font-size: 1.125rem; color: #374151; line-height: 1.625; margin-bottom: 2rem; }
         </style>
       </head>
       <body>
-        <div class="container w-9/12 mx-auto px-4 py-8 bg-white bg-opacity-90 rounded-lg shadow-md">
-          <h1 class="text-4xl font-bold text-gray-800 mb-4">Preview</h1>
-          <p class="text-sm text-gray-600 mb-8">${currentDate}</p>
-          <h2 class="text-2xl font-bold text-gray-800 mb-4">${title}</h2>
-          <div class="text-lg text-gray-700 leading-relaxed mb-8">${content}</div>
-          <div class="border-t border-gray-300 pt-8 text-center text-gray-600">
-            <p class="mb-4">Thank you for reading!</p>
+        <div class="container">
+          <h1 class="title">Preview</h1>
+          <p class="date">${currentDate}</p>
+          <h2 class="title">${title}</h2>
+          <div class="content">${content}</div>
+          <div style="border-top: 1px solid #d1d5db; padding-top: 2rem; text-align: center; color: #6b7280;">
+            <p style="margin-bottom: 1rem;">Thank you for reading!</p>
             <p>Follow us on social media for more updates.</p>
-            <!-- Add your social media icons/links here if needed -->
           </div>
         </div>
       </body>
       </html>
     `;
-  
     const previewTab = window.open();
     previewTab.document.write(previewHTML);
   };
-  
 
   const handleClear = () => {
     setTitle("");
     setContent("");
-    setCharCount(0);
-    setWordCount(0);
+    message.info("Form cleared.");
   };
 
   const handleSubmit = () => {
     if (!title || !content) {
-      toast.error("Please fill in all fields");
+      message.error("Please fill in all fields.");
       return;
     }
 
-    const existingEntries =
-      JSON.parse(localStorage.getItem("blogEntries")) || [];
-
+    const existingEntries = JSON.parse(localStorage.getItem("blogEntries")) || [];
     const blogEntry = { id: Date.now(), title, content };
-
     const updatedEntries = [...existingEntries, blogEntry];
-
     localStorage.setItem("blogEntries", JSON.stringify(updatedEntries));
 
     saveDataToJsonFile(updatedEntries);
 
-    toast.success("Blog entry submitted successfully");
-
+    message.success("Blog entry submitted successfully.");
     updateBlogs(blogEntry);
-
-    setTitle("");
-    setContent("");
-    setCharCount(0);
-    setWordCount(0);
+    handleClear();
   };
 
-  const handleImageUpload = (blobInfo, success, failure, progress) => {
+  const handleImageUpload = (blobInfo, success) => {
     const fileInput = document.createElement("input");
     fileInput.setAttribute("type", "file");
     fileInput.setAttribute("accept", "image/*");
@@ -147,14 +131,12 @@ const Blog = ({ updateBlogs }) => {
 
   const handlePDFDownload = () => {
     if (!title || !content) {
-      toast.error("Please enter title and content before downloading PDF.");
+      message.error("Please enter a title and content before downloading the PDF.");
       return;
     }
-
     setShowPDFPreview(true);
   };
 
-  // Function to save data to JSON file
   const saveDataToJsonFile = (data) => {
     const jsonData = JSON.stringify(data, null, 2);
     const blob = new Blob([jsonData], { type: "application/json" });
@@ -171,27 +153,28 @@ const Blog = ({ updateBlogs }) => {
   };
 
   return (
-    <div className="w-full h-full p-2 flex flex-col">
-      <ToastContainer />
-      <div>
-        <div className="flex justify-between items-center mb-3 mt-2">
-          <h5 className="text-2xl font-semibold">New Blog Entry</h5>
-          <div className="flex items-center">
+    <Layout className="site-layout" style={{ padding: "16px" }}>
+      <Content>
+        {/* Header with action buttons */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+          <Title level={4} style={{ margin: 0 }}>New Blog Entry</Title>
+          <Space>
+            {/* Tailwind CSS Buttons */}
             <button
               onClick={handlePDFDownload}
-              className="bg-gray-300 hover:bg-gray-400  mr-2 text-gray-800 px-3 py-2 text-xs rounded-full flex items-center sm:text-sm"
+              className="bg-gray-300 hover:bg-gray-400 mr-2 text-gray-800 px-3 py-2 text-xs rounded-full flex items-center sm:text-sm"
             >
               <RiDownload2Line className="mr-2" /> PDF
             </button>
             <button
               onClick={handlePreview}
-              className="bg-gray-800 hover:bg-gray-900 mr-2  text-white px-4 py-2 rounded-full text-sm flex items-center"
+              className="bg-gray-800 hover:bg-gray-900 mr-2 text-white px-4 py-2 rounded-full text-sm flex items-center"
             >
               <RiEyeLine className="mr-2" /> Preview
             </button>
             <button
               onClick={handleClear}
-              className="bg-gray-300 hover:bg-gray-400 mr-2  text-gray-800 px-3 py-2 text-xs rounded-full flex items-center sm:text-sm"
+              className="bg-gray-300 hover:bg-gray-400 mr-2 text-gray-800 px-3 py-2 text-xs rounded-full flex items-center sm:text-sm"
             >
               <RiDeleteBinLine className="mr-2" /> Clear
             </button>
@@ -201,26 +184,21 @@ const Blog = ({ updateBlogs }) => {
             >
               <RiSendPlane2Line className="mr-2" /> Submit
             </button>
-          </div>
+          </Space>
         </div>
-        <div
-          className="bg-white rounded-2xl   w-full  p-3"
-          style={{ boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px" }}
-        >
-          <div className="mb-4">
-            <h6 className="text-sm text-gray-400 italic">Title</h6>
-            <input
-              type="text"
+
+        {/* Content Box */}
+        <div style={{ padding: "24px", background: "#fff", borderRadius: "8px", boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px" }}>
+          <div style={{ marginBottom: "16px" }}>
+            <Paragraph type="secondary" style={{ marginBottom: "4px" }}>Title</Paragraph>
+            <Input
               placeholder="Enter title"
               value={title}
               onChange={handleTitleChange}
-              className="w-full border border-gray-300 rounded-md px-4 py-2"
             />
           </div>
-          <div className=" mb-2">
-            <div className="flex justify-between items-center mb-1">
-              <h6 className="text-sm text-gray-400 italic">Content</h6>
-            </div>
+          <div>
+            <Paragraph type="secondary" style={{ marginBottom: "4px" }}>Content</Paragraph>
             <Editor
               apiKey="your-api-key"
               initialValue={content}
@@ -235,42 +213,34 @@ const Blog = ({ updateBlogs }) => {
                   "media emoticons powerpaste pdf",
                 ],
                 toolbar:
-                  "file edit view format tools table emoticons | \
-    undo redo | formatselect | bold italic backcolor | \
-    alignleft aligncenter alignright alignjustify | \
-    bullist numlist outdent indent | removeformat | image media pdf | help",
-                images_upload_url: "your-upload-url",
+                  "file edit view format tools table emoticons | undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | image media pdf | help",
                 images_upload_handler: handleImageUpload,
               }}
             />
           </div>
         </div>
-      </div>
-      {showPDFPreview && (
-        <div className="w-full h-full fixed top-0 left-0 z-50 bg-gray-800 bg-opacity-75 flex items-center justify-center">
-          <div className="bg-white rounded-lg overflow-hidden">
-            <div className="flex justify-between items-center bg-gray-200 p-3">
-              <h2 className="text-lg font-semibold">PDF Preview</h2>
-              <button
-                className="text-gray-800 hover:text-gray-600"
-                onClick={() => setShowPDFPreview(false)}
-              >
-                <AiOutlineClose className="mr-1" />
-              </button>
-            </div>
-            <div style={{ width: "600px", height: "550px" }}>
-              <PDFViewer width="100%" height="100%">
-                <PDFDocument
-                  title={title}
-                  content={content}
-                  imageData={imageData}
-                />
-              </PDFViewer>
-            </div>
-          </div>
+      </Content>
+
+      {/* Ant Design Modal for PDF Preview */}
+      <Modal
+        title="PDF Preview"
+        open={showPDFPreview}
+        onCancel={() => setShowPDFPreview(false)}
+        footer={null}
+        width={700}
+        destroyOnClose={true}
+      >
+        <div style={{ width: "100%", height: "600px" }}>
+          <PDFViewer width="100%" height="100%">
+            <PDFDocument
+              title={title}
+              content={content}
+              imageData={imageData}
+            />
+          </PDFViewer>
         </div>
-      )}
-    </div>
+      </Modal>
+    </Layout>
   );
 };
 
