@@ -44,7 +44,7 @@ function App() {
             />
             <Route
               path="/blog-preview"
-              element={<Content selectedMenuItem="BlogList" />} // Change this to the appropriate component for blog preview
+              element={<Content selectedMenuItem="BlogList" />}  
             />
             <Route
               path="/overview"

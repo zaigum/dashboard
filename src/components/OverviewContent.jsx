@@ -7,9 +7,10 @@ import {
   FaMoneyBill,
   FaArrowUp,
   FaArrowDown,
+  FaDesktop,
+  FaTabletAlt,
+  FaMobileAlt,
 } from "react-icons/fa";
-import { FaDesktop, FaTabletAlt, FaMobileAlt } from "react-icons/fa";
-import { Progress } from "flowbite-react";
 
 const OverviewContent = ({ userData }) => {
   const [budget, setBudget] = useState("$100,000");
@@ -24,7 +25,6 @@ const OverviewContent = ({ userData }) => {
     const fetchData = async () => {
       try {
         await new Promise((resolve) => setTimeout(resolve, 1000));
-
         setBudget("$120,000");
         setTotalCustomers(1700);
         setTaskProgress(85);
@@ -33,7 +33,6 @@ const OverviewContent = ({ userData }) => {
         console.error("Error fetching data:", error);
       }
     };
-
     fetchData();
   }, []);
 
@@ -47,19 +46,22 @@ const OverviewContent = ({ userData }) => {
           backgroundColor: "rgba(75, 192, 192, 0.2)",
           borderColor: "rgba(75, 192, 192, 1)",
           borderWidth: 2,
+          fill: true,
+          tension: 0.4,
         },
       ],
     };
 
     const doughnutData = {
+      labels: ["Desktop", "Tablet", "Phone"],
       datasets: [
         {
-          label: "My First Dataset",
-          data: [100, 600, 100],
+          label: "Traffic Source",
+          data: [70, 20, 10],
           backgroundColor: [
-            "rgb(256, 99, 132)",
-            "rgb(54, 162, 235)",
-            "rgb(255, 205, 86)",
+            "rgb(59, 130, 246)", // blue-500
+            "rgb(139, 92, 246)", // violet-500
+            "rgb(249, 115, 22)", // orange-500
           ],
           hoverOffset: 4,
         },
@@ -71,9 +73,24 @@ const OverviewContent = ({ userData }) => {
         type: "line",
         data: salesData,
         options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false,
+            },
+          },
           scales: {
+            x: {
+              grid: {
+                display: false,
+              },
+            },
             y: {
               beginAtZero: true,
+              grid: {
+                borderDash: [5, 5],
+              },
             },
           },
         },
@@ -82,6 +99,33 @@ const OverviewContent = ({ userData }) => {
       const doughnutChart = new Chart(doughnutChartRef.current, {
         type: "doughnut",
         data: doughnutData,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: {
+                boxWidth: 10,
+                padding: 15,
+              },
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  let label = context.label || "";
+                  if (label) {
+                    label += ": ";
+                  }
+                  if (context.parsed !== null) {
+                    label += context.parsed + "%";
+                  }
+                  return label;
+                },
+              },
+            },
+          },
+        },
       });
 
       return () => {
@@ -91,106 +135,124 @@ const OverviewContent = ({ userData }) => {
     }
   }, []);
 
+  const dataCards = [
+    {
+      title: "Budget",
+      value: budget,
+      change: "10%",
+      direction: "up",
+      icon: <FaDollarSign />,
+      color: "bg-red-500",
+    },
+    {
+      title: "Total Customers",
+      value: totalCustomers,
+      change: "5%",
+      direction: "down",
+      icon: <FaUsers />,
+      color: "bg-green-500",
+    },
+    {
+      title: "Task Progress",
+      value: `${taskProgress}%`,
+      change: null,
+      direction: null,
+      icon: <FaTasks />,
+      color: "bg-yellow-400",
+      progress: true,
+    },
+    {
+      title: "Total Profit",
+      value: totalProfit,
+      change: null,
+      direction: null,
+      icon: <FaMoneyBill />,
+      color: "bg-blue-600",
+    },
+  ];
+
   return (
-    <div className="p-2">
-      <h2 className="text-xl italic font-bold ">Overview</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="shadow-xl p-4 rounded-md flex justify-between items-center mb-6">
-          <div>
-            <h3 className="text-gray-600 text-sm">Budget</h3>
-            <p className="text-2xl font-bold text-gray-800">{budget}</p>
-            <p className="text-sm text-gray-500">
-              Since Last Month: <FaArrowUp className="text-green-500 inline" />{" "}
-              10%
-            </p>
-          </div>
-          <FaDollarSign className="text-5xl text-white bg-red-500 rounded-full p-2" />
-        </div>
-        <div className="shadow-xl p-4 rounded-md flex justify-between items-center mb-6">
-          <div>
-            <h3 className="text-gray-600 text-sm">Total Customers</h3>
-            <p className="text-2xl font-bold text-gray-800">{totalCustomers}</p>
-            <p className="text-sm text-gray-500">
-              Since Last Month: <FaArrowDown className="text-red-500 inline" />{" "}
-              5%
-            </p>
-          </div>
-          <FaUsers className="text-5xl text-white bg-green-500 rounded-full p-2" />
-        </div>
-        <div className="shadow-xl p-4 rounded-md flex justify-between items-center mb-6">
-          <div>
-            <h3 className="text-gray-600 text-sm">Task Progress</h3>
-            <span className="text-2xl font-bold text-gray-800">
-              {taskProgress}%
-            </span>
-            <Progress
-              value={taskProgress}
-              max={100}
-              color="bg-blue-600"
-              className="w-full h-2 mb-2"
-            />
-          </div>
-          <FaTasks className="text-5xl text-white bg-yellow-400 rounded-full p-2" />
-        </div>
-        <div className="shadow-xl p-4 rounded-md flex justify-between items-center mb-6">
-          <div>
-            <h3 className="text-gray-600 text-sm">Total Profit</h3>
-            <p className="text-2xl font-bold text-gray-800">{totalProfit}</p>
-          </div>
-          <FaMoneyBill className="text-5xl text-white bg-blue-600 rounded-full p-2" />
-        </div>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="w-full shadow-xl">
-          <div className="p-6">
-            <h3 className="text-xl text-gray-950 font-semibold mb-2">
-              Sales Chart
-            </h3>
-            <canvas
-              ref={salesChartRef}
-              style={{
-                maxWidth: "500px",
-                maxHeight: "300px",
-                width: "100%",
-                height: "100%",
-              }}
-            ></canvas>
-          </div>
-        </div>
-        <div className="p-4 relative shadow-xl">
-          <h3 className="text-xl text-gray-950 font-semibold mb-2">
-            Traffic Source
-          </h3>
-          <canvas
-            ref={doughnutChartRef}
-            style={{
-              maxWidth: "500px",
-              maxHeight: "250px",
-              width: "100%",
-              height: "100%",
-            }}
-          ></canvas>
-          <div className="absolute bottom-2 ml-40 flex justify-center">
-            <div className="flex flex-col items-center mr-6">
-              <FaDesktop className="mb-1 text-2xl" />
-              <span className="text-xs text-gray-950 font-bold mb-2">
-                Desktop
-              </span>
-              <span className="text-xs">70%</span>
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <h2 className="text-3xl font-extrabold text-gray-900 mb-6 italic">Overview</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {dataCards.map((card, index) => (
+          <div
+            key={index}
+            className="bg-white rounded-xl shadow-lg p-6 flex items-center justify-between transition-transform transform hover:scale-105"
+          >
+            <div>
+              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                {card.title}
+              </h3>
+              {card.progress ? (
+                <>
+                  <p className="text-3xl font-bold text-gray-800 my-1">{card.value}</p>
+                  <div className="w-full bg-gray-200 rounded-full h-2.5">
+                    <div
+                      className="bg-blue-600 h-2.5 rounded-full"
+                      style={{ width: card.value }}
+                    ></div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className="text-3xl font-bold text-gray-800">{card.value}</p>
+                  {card.change && (
+                    <div className="flex items-center text-sm mt-1">
+                      {card.direction === "up" ? (
+                        <FaArrowUp className="text-green-500 mr-1" />
+                      ) : (
+                        <FaArrowDown className="text-red-500 mr-1" />
+                      )}
+                      <span
+                        className={
+                          card.direction === "up" ? "text-green-500" : "text-red-500"
+                        }
+                      >
+                        {card.change}
+                      </span>
+                      <span className="text-gray-500 ml-1">Since last month</span>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
-            <div className="flex flex-col items-center mr-6">
-              <FaTabletAlt className="mb-1 text-2xl" />
-              <span className="text-xs text-gray-950 font-bold mb-2">
-                Tablet
-              </span>
-              <span className="text-xs">20%</span>
+            <div
+              className={`p-3 rounded-full ${card.color} text-white text-3xl`}
+            >
+              {card.icon}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">Sales Chart</h3>
+          <div className="h-80">
+            <canvas ref={salesChartRef}></canvas>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">Traffic Source</h3>
+          <div className="h-80 w-full flex-grow flex items-center justify-center">
+            <canvas ref={doughnutChartRef} className="max-w-xs"></canvas>
+          </div>
+          <div className="flex justify-center w-full mt-4 space-x-8">
+            <div className="flex flex-col items-center">
+              <FaDesktop className="text-2xl text-blue-500" />
+              <span className="text-sm font-medium mt-1">Desktop</span>
+              <span className="text-xs text-gray-500">70%</span>
             </div>
             <div className="flex flex-col items-center">
-              <FaMobileAlt className="mb-1 text-2xl" />
-              <span className="text-xs text-gray-950 font-bold mb-2">
-                Phone
-              </span>
-              <span className="text-xs">10%</span>
+              <FaTabletAlt className="text-2xl text-violet-500" />
+              <span className="text-sm font-medium mt-1">Tablet</span>
+              <span className="text-xs text-gray-500">20%</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <FaMobileAlt className="text-2xl text-orange-500" />
+              <span className="text-sm font-medium mt-1">Phone</span>
+              <span className="text-xs text-gray-500">10%</span>
             </div>
           </div>
         </div>
