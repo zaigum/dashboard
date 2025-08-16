@@ -311,21 +311,21 @@ const BlogListPage = ({ updateBlogs }) => {
                   icon={<EyeOutlined />}
                   onClick={() => handlePreview(blog)}
                 >
-                  Preview
+                    Preview
                 </Menu.Item>
                 <Menu.Item
                   key="share"
                   icon={<ShareAltOutlined />}
                   onClick={() => handleShare(blog)}
                 >
-                  Share
+                    Share
                 </Menu.Item>
                 <Menu.Item
                   key="pdf"
                   icon={<FilePdfOutlined />}
                   onClick={() => handlePDF(blog.id)}
                 >
-                  PDF
+                    PDF
                 </Menu.Item>
               </Menu>
             }
