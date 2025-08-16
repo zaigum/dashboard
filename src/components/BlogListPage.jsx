@@ -19,6 +19,8 @@ import {
   ShareAltOutlined,
   FilePdfOutlined,
   DownOutlined,
+  SaveOutlined,
+  RollbackOutlined,
 } from "@ant-design/icons";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -33,16 +35,24 @@ const BlogListPage = ({ updateBlogs }) => {
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [viewedBlog, setViewedBlog] = useState(null);
+  const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
+  const [blogToRestore, setBlogToRestore] = useState(null);
   const [updatedTitle, setUpdatedTitle] = useState("");
   const [updatedContent, setUpdatedContent] = useState("");
   const [blogs, setBlogs] = useState([]);
+  const [archivedBlogs, setArchivedBlogs] = useState([]);
+  const [showArchived, setShowArchived] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(4);
   const { token } = useToken();
 
   useEffect(() => {
     const storedBlogs = JSON.parse(localStorage.getItem("blogEntries")) || blogsData;
+    const storedArchivedBlogs = JSON.parse(localStorage.getItem("archivedBlogs")) || [];
     setBlogs(storedBlogs);
+    setArchivedBlogs(storedArchivedBlogs);
   }, []);
 
   const handleEdit = (blog) => {
@@ -50,6 +60,11 @@ const BlogListPage = ({ updateBlogs }) => {
     setUpdatedTitle(blog.title);
     setUpdatedContent(blog.content);
     setIsEditModalOpen(true);
+  };
+
+  const handleView = (blog) => {
+    setViewedBlog(blog);
+    setIsViewModalOpen(true);
   };
 
   const handleDelete = (blog) => {
@@ -63,6 +78,36 @@ const BlogListPage = ({ updateBlogs }) => {
     setBlogs(updatedBlogs);
     toast.success("Blog deleted successfully.");
     setIsDeleteModalOpen(false);
+  };
+
+  const handleArchive = (blogToArchive) => {
+    const newArchivedBlogs = [...archivedBlogs, blogToArchive];
+    localStorage.setItem("archivedBlogs", JSON.stringify(newArchivedBlogs));
+    setArchivedBlogs(newArchivedBlogs);
+
+    const updatedBlogs = blogs.filter((b) => b.id !== blogToArchive.id);
+    localStorage.setItem("blogEntries", JSON.stringify(updatedBlogs));
+    setBlogs(updatedBlogs);
+
+    toast.success("Blog archived successfully.");
+  };
+
+  const handleRestore = (blog) => {
+    setBlogToRestore(blog);
+    setIsRestoreModalOpen(true);
+  };
+
+  const confirmRestore = () => {
+    const newBlogs = [...blogs, blogToRestore];
+    localStorage.setItem("blogEntries", JSON.stringify(newBlogs));
+    setBlogs(newBlogs);
+
+    const updatedArchivedBlogs = archivedBlogs.filter((b) => b.id !== blogToRestore.id);
+    localStorage.setItem("archivedBlogs", JSON.stringify(updatedArchivedBlogs));
+    setArchivedBlogs(updatedArchivedBlogs);
+
+    toast.success("Blog restored successfully.");
+    setIsRestoreModalOpen(false);
   };
 
   const handleUpdate = () => {
@@ -99,12 +144,6 @@ const BlogListPage = ({ updateBlogs }) => {
       year: "numeric",
       month: "long",
       day: "numeric",
-    });
-
-    const queryString = new URLSearchParams({
-      title,
-      content,
-      currentDate,
     });
 
     return `
@@ -145,7 +184,7 @@ const BlogListPage = ({ updateBlogs }) => {
   };
 
   const handleShare = (blog) => {
-    const blogUrl = `${window.location.origin}/blog/${blog.id}`; // Assuming a route for individual blogs
+    const blogUrl = `${window.location.origin}/blog/${blog.id}`;
 
     if (navigator.share) {
       navigator
@@ -196,6 +235,10 @@ const BlogListPage = ({ updateBlogs }) => {
     blog.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const filteredArchivedBlogs = archivedBlogs.filter((blog) =>
+    blog.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const columns = [
     {
       title: "Title",
@@ -223,19 +266,45 @@ const BlogListPage = ({ updateBlogs }) => {
           <Dropdown
             overlay={
               <Menu>
+                {showArchived ? (
+                  <Menu.Item
+                    key="restore"
+                    icon={<RollbackOutlined />}
+                    onClick={() => handleRestore(blog)}
+                  >
+                    Restore
+                  </Menu.Item>
+                ) : (
+                  <>
+                    <Menu.Item
+                      key="edit"
+                      icon={<EditOutlined />}
+                      onClick={() => handleEdit(blog)}
+                    >
+                      Edit
+                    </Menu.Item>
+                    <Menu.Item
+                      key="delete"
+                      icon={<DeleteOutlined />}
+                      onClick={() => handleDelete(blog)}
+                    >
+                      Delete
+                    </Menu.Item>
+                    <Menu.Item
+                      key="archive"
+                      icon={<SaveOutlined />}
+                      onClick={() => handleArchive(blog)}
+                    >
+                      Archive
+                    </Menu.Item>
+                  </>
+                )}
                 <Menu.Item
-                  key="edit"
-                  icon={<EditOutlined />}
-                  onClick={() => handleEdit(blog)}
+                  key="view"
+                  icon={<EyeOutlined />}
+                  onClick={() => handleView(blog)}
                 >
-                  Edit
-                </Menu.Item>
-                <Menu.Item
-                  key="delete"
-                  icon={<DeleteOutlined />}
-                  onClick={() => handleDelete(blog)}
-                >
-                  Delete
+                  View
                 </Menu.Item>
                 <Menu.Item
                   key="preview"
@@ -276,6 +345,8 @@ const BlogListPage = ({ updateBlogs }) => {
     setPageSize(pageSize);
   };
 
+  const dataSource = showArchived ? filteredArchivedBlogs : filteredBlogs;
+
   return (
     <div
       style={{
@@ -294,24 +365,31 @@ const BlogListPage = ({ updateBlogs }) => {
           marginBottom: "16px",
         }}
       >
-        <h2 style={{ margin: 0, fontWeight: 600 }}>Blog List</h2>
-        <Input
-          placeholder="Search blogs"
-          prefix={<SearchOutlined />}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          style={{ width: 250 }}
-        />
+        <h2 style={{ margin: 0, fontWeight: 600 }}>
+          {showArchived ? "Archived Blogs" : "Blog List"}
+        </h2>
+        <Space>
+          <Input
+            placeholder="Search blogs"
+            prefix={<SearchOutlined />}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ width: 250 }}
+          />
+          <Button onClick={() => setShowArchived(!showArchived)}>
+            {showArchived ? "Show Main Blogs" : "Show Archived Blogs"}
+          </Button>
+        </Space>
       </div>
 
       <Table
         columns={columns}
-        dataSource={filteredBlogs}
+        dataSource={dataSource}
         rowKey="id"
         pagination={{
           current: currentPage,
           pageSize: pageSize,
-          total: filteredBlogs.length,
+          total: dataSource.length,
           onChange: handlePageChange,
           showSizeChanger: true,
           showTotal: (total, range) =>
@@ -381,6 +459,36 @@ const BlogListPage = ({ updateBlogs }) => {
         okType="danger"
       >
         <p>Are you sure you want to delete this blog?</p>
+      </Modal>
+
+      <Modal
+        title={viewedBlog?.title}
+        open={isViewModalOpen}
+        onCancel={() => setIsViewModalOpen(false)}
+        footer={[
+          <Button key="close" onClick={() => setIsViewModalOpen(false)}>
+            Close
+          </Button>,
+        ]}
+        width="80%"
+        style={{ top: 20 }}
+      >
+        <div
+          dangerouslySetInnerHTML={{ __html: viewedBlog?.content }}
+          style={{ maxHeight: "400px", overflowY: "auto" }}
+        />
+      </Modal>
+
+      <Modal
+        title="Confirm Restoration"
+        open={isRestoreModalOpen}
+        onOk={confirmRestore}
+        onCancel={() => setIsRestoreModalOpen(false)}
+        okText="Yes"
+        cancelText="No"
+        okType="primary"
+      >
+        <p>Are you sure you want to restore this blog?</p>
       </Modal>
     </div>
   );
