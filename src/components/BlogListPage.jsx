@@ -45,12 +45,14 @@ const BlogListPage = ({ updateBlogs }) => {
   const [archivedBlogs, setArchivedBlogs] = useState([]);
   const [showArchived, setShowArchived] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(4);
+  const [pageSize, setPageSize] = useState(10);
   const { token } = useToken();
 
   useEffect(() => {
-    const storedBlogs = JSON.parse(localStorage.getItem("blogEntries")) || blogsData;
-    const storedArchivedBlogs = JSON.parse(localStorage.getItem("archivedBlogs")) || [];
+    const storedBlogs =
+      JSON.parse(localStorage.getItem("blogEntries")) || blogsData;
+    const storedArchivedBlogs =
+      JSON.parse(localStorage.getItem("archivedBlogs")) || [];
     setBlogs(storedBlogs);
     setArchivedBlogs(storedArchivedBlogs);
   }, []);
@@ -102,8 +104,13 @@ const BlogListPage = ({ updateBlogs }) => {
     localStorage.setItem("blogEntries", JSON.stringify(newBlogs));
     setBlogs(newBlogs);
 
-    const updatedArchivedBlogs = archivedBlogs.filter((b) => b.id !== blogToRestore.id);
-    localStorage.setItem("archivedBlogs", JSON.stringify(updatedArchivedBlogs));
+    const updatedArchivedBlogs = archivedBlogs.filter(
+      (b) => b.id !== blogToRestore.id
+    );
+    localStorage.setItem(
+      "archivedBlogs",
+      JSON.stringify(updatedArchivedBlogs)
+    );
     setArchivedBlogs(updatedArchivedBlogs);
 
     toast.success("Blog restored successfully.");
@@ -311,21 +318,21 @@ const BlogListPage = ({ updateBlogs }) => {
                   icon={<EyeOutlined />}
                   onClick={() => handlePreview(blog)}
                 >
-                    Preview
+                  Preview
                 </Menu.Item>
                 <Menu.Item
                   key="share"
                   icon={<ShareAltOutlined />}
                   onClick={() => handleShare(blog)}
                 >
-                    Share
+                  Share
                 </Menu.Item>
                 <Menu.Item
                   key="pdf"
                   icon={<FilePdfOutlined />}
                   onClick={() => handlePDF(blog.id)}
                 >
-                    PDF
+                  PDF
                 </Menu.Item>
               </Menu>
             }
