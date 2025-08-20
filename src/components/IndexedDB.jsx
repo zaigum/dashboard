@@ -51,19 +51,19 @@ export async function updateUserAccount(username, email, newPassword) {
     const transaction = db.transaction('users', 'readwrite');
     const usersStore = transaction.objectStore('users');
 
-    // Fetch the user by email
+     
     const user = await usersStore.index('email').get(email);
 
     if (!user) {
       throw new Error('User not found');
     }
 
-    // Update the user's information
+     
     user.username = username;
     user.email = email;
     user.password = newPassword;
 
-    // Put the updated user back into the database
+     
     await usersStore.put(user);
 
     return 'Account updated successfully';
