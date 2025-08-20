@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { updateUserAccount } from "../components/IndexedDB";
-import { RiEyeLine, RiEyeOffLine } from "react-icons/ri"; // React Icons
+import { RiEyeLine, RiEyeOffLine } from "react-icons/ri";  
 import { ToastContainer } from "react-toastify";
 import {
   TextField,
@@ -71,7 +71,7 @@ const AccountContent = ({ username: initialUsername, email: initialEmail }) => {
       username,
       email,
       newPassword,
-      null, // Pass null for avatar since we're not using it
+      null,  
       updateField === "email",
       updateField === "password"
     )
