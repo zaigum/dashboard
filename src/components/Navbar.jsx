@@ -26,7 +26,7 @@ const Navbar = ({
 
   const handleMenuClose = (menuItem) => {
     setAnchorEl(null);
-    navigate(`/${menuItem.toLowerCase()}`); // Navigate to the selected menu item
+    navigate(`/${menuItem.toLowerCase()}`);  
   };
 
   return (
@@ -81,7 +81,7 @@ const Navbar = ({
         <div>
           <Avatar
             alt="User Avatar"
-            src={avatarSrc} // Use the avatar image source provided as prop
+            src={avatarSrc}  
             onClick={handleMenuOpen}
           />
 
