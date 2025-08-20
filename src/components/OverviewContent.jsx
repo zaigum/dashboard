@@ -59,9 +59,9 @@ const OverviewContent = ({ userData }) => {
           label: "Traffic Source",
           data: [70, 20, 10],
           backgroundColor: [
-            "rgb(59, 130, 246)", // blue-500
-            "rgb(139, 92, 246)", // violet-500
-            "rgb(249, 115, 22)", // orange-500
+            "rgb(59, 130, 246)",  
+            "rgb(139, 92, 246)",  
+            "rgb(249, 115, 22)",  
           ],
           hoverOffset: 4,
         },
