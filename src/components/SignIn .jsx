@@ -11,8 +11,8 @@ import {
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import logo from "../assets/logo.png"; // Import your logo image here
-import backgroundImage from "../assets/bg.jpg"; // Import your background image here
+import logo from "../assets/logo.png";  
+import backgroundImage from "../assets/bg.jpg";  
 
 const Login = ({ onLogin, toggleForm }) => {
   const [username, setUsername] = useState("");
