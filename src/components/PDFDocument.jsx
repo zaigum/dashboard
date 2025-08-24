@@ -4,7 +4,7 @@ import { Document, Page, Text, View, StyleSheet, Image } from "@react-pdf/render
 const styles = StyleSheet.create({
     page: {
       flexDirection: "column",
-      backgroundColor: "white", // Set background color to white
+      backgroundColor: "white",  
       padding: 10,
     },
     section: {
@@ -31,8 +31,7 @@ const styles = StyleSheet.create({
   
 
 const PDFDocument = ({ title, content, imageData }) => {
-  // Function to strip HTML tags from content
-  const stripHtmlTags = (html) => {
+   const stripHtmlTags = (html) => {
     const doc = new DOMParser().parseFromString(html, "text/html");
     return doc.body.textContent || "";
   };
