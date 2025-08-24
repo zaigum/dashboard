@@ -178,7 +178,7 @@ const AccountContent = ({ username: initialUsername, email: initialEmail }) => {
             <Button
               onClick={handleUpdateAccount}
               variant="contained"
-              size="medium" // Set size to medium
+              size="medium"  
               sx={{
                 backgroundColor: "#374151",
                 color: "#fff",
