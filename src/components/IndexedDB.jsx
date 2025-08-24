@@ -1,5 +1,4 @@
-// IndexedDB helper functions
-
+ 
 export function openDatabase() {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open("userData", 1);
@@ -20,8 +19,7 @@ export function openDatabase() {
       };
     });
   }
-  
-  // IndexedDB.js
+ 
 
 export function addUser(username, email, password, avatar) {
   return new Promise((resolve, reject) => {
