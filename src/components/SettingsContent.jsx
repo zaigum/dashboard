@@ -1,4 +1,4 @@
-// Create SettingsContent.js
+
 import React from 'react';
 
 const SettingsContent = () => {
