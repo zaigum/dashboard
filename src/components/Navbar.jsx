@@ -12,10 +12,8 @@ import { NavLink, useNavigate } from "react-router-dom";
 const Navbar = ({
   toggleSidebar,
   isSidebarOpen,
-  handleLogout,
-  username,
-  email,
-  avatarSrc,  
+  currentUser,
+  onLogout,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();  
@@ -113,13 +111,13 @@ const Navbar = ({
             </MenuItem>
             <MenuItem onClick={() => handleMenuClose("Account")}>
               <AccountCircleIcon fontSize="small" />
-              <span className="ml-2">{username}</span>
+              <span className="ml-2">{currentUser?.username || 'User'}</span>
             </MenuItem>
             <MenuItem onClick={() => handleMenuClose("Settings")}>
               <SettingsIcon fontSize="small" />
               <span className="ml-2">Settings</span>
             </MenuItem>
-            <MenuItem onClick={handleLogout}>
+            <MenuItem onClick={onLogout}>
               <LogoutIcon fontSize="small" />
               <span className="ml-2">Logout</span>
             </MenuItem>

@@ -15,28 +15,49 @@ import { addUser } from "./IndexedDB";
 import logo from "../assets/logo.png";
 import backgroundImage from "../assets/bg.jpg";
 
-const SignIn = ({ onSignIn, toggleForm }) => {
+const SignUp = ({ onSignUp, toggleForm }) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSignIn = () => {
-    if (!username || !email || !password || password !== confirmPassword) {
-      toast.error("Please fill in all fields correctly.");
+  const validateEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const handleSignUp = async () => {
+    if (!username.trim()) {
+      toast.error("Username is required");
+      return;
+    }
+    if (!email.trim() || !validateEmail(email)) {
+      toast.error("Valid email is required");
+      return;
+    }
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
       return;
     }
 
-    addUser(username, email, password)
-      .then(() => {
-        toast.success("Sign-UP successful!");
-        onSignIn(username, email, password);
-      })
-      .catch((error) => {
-        toast.error("Error signing in: " + error);
-      });
+    setLoading(true);
+    try {
+      await addUser(username.trim(), email.trim(), password);
+      toast.success("Account created successfully!");
+      setTimeout(() => {
+        onSignUp(username.trim(), email.trim());
+      }, 1000);
+    } catch (error) {
+      toast.error(error.includes("unique") ? "Email already exists" : "Error creating account");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -149,10 +170,11 @@ const SignIn = ({ onSignIn, toggleForm }) => {
                 fullWidth
                 variant="contained"
                 color="primary"
-                onClick={handleSignIn}
+                onClick={handleSignUp}
+                disabled={loading}
                 style={{ marginTop: 20 }}
               >
-                Sign Up
+                {loading ? "Creating Account..." : "Sign Up"}
               </Button>
               <div className="mt-4 text-sm text-center">
                 <Typography variant="body2">
@@ -171,4 +193,4 @@ const SignIn = ({ onSignIn, toggleForm }) => {
   );
 };
 
-export default SignIn;
+export default SignUp;
