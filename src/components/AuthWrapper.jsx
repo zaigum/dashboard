@@ -21,7 +21,7 @@ const AuthWrapper = ({ onAuthenticated }) => {
   };
 
   const toggleForm = (form) => {
-    setCurrentForm(form);
+    setCurrentForm(form === "signup" ? "signup" : "signin");
   };
 
   return (

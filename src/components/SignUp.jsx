@@ -179,7 +179,7 @@ const SignUp = ({ onSignUp, toggleForm }) => {
               <div className="mt-4 text-sm text-center">
                 <Typography variant="body2">
                   Already have an account?{" "}
-                  <Link href="#" onClick={() => toggleForm("login")}>
+                  <Link href="#" onClick={() => toggleForm("signin")}>
                     Sign In
                   </Link>
                 </Typography>

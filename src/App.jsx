@@ -13,6 +13,21 @@ function App() {
   const [selectedMenuItem, setSelectedMenuItem] = useState("Overview");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  React.useEffect(() => {
+    const storedUser = localStorage.getItem("currentUser");
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        setCurrentUser(user);
+        setIsAuthenticated(true);
+      } catch (error) {
+        localStorage.removeItem("currentUser");
+      }
+    }
+    setLoading(false);
+  }, []);
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
@@ -29,6 +44,14 @@ function App() {
     setCurrentUser(null);
     setIsAuthenticated(false);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return <AuthWrapper onAuthenticated={handleAuthenticated} />;
