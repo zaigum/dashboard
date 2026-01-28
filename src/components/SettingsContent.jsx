@@ -5,8 +5,7 @@ const SettingsContent = () => {
     return (
         <div>
             Settings Content
-            {/* Add content specific to Settings */}
-        </div>
+         </div>
     );
 };
 
