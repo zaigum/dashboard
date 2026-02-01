@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { TextField, Button, Typography, Container, Link, IconButton, InputAdornment } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { TextField, Button, Typography, Container, Link, IconButton, InputAdornment, Box, Paper } from "@mui/material";
+import { Visibility, VisibilityOff, Person, Email, Lock } from "@mui/icons-material";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { addUser } from "./IndexedDB";
@@ -42,34 +42,34 @@ const SignUp = ({ onSignUp, toggleForm }) => {
   };
 
   return (
-    <div className="bg-gray-950 w-screen flex justify-center items-center" style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: "cover", minHeight: "100vh" }}>
+    <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
       <Container maxWidth="sm">
-        <div className="bg-white shadow-lg w-5/6 ml-12 rounded-xl overflow-hidden">
-          <div className="p-6">
-            <div className="flex items-center font-semibold italic justify-between mb-8">
-              <Typography component="h1" variant="h6">Analytics</Typography>
-              <img src={logo} alt="Logo" className="w-12 h-12" />
-            </div>
-            <Typography component="h2" variant="h5" className="italic text-center mb-6">Sign Up</Typography>
-            <form>
-              <TextField variant="outlined" margin="normal" fullWidth id="username" label="Username" name="username" autoComplete="username" autoFocus value={formData.username} onChange={handleInputChange('username')} />
-              <TextField variant="outlined" margin="normal" fullWidth id="email" label="Email" name="email" autoComplete="email" value={formData.email} onChange={handleInputChange('email')} />
-              <TextField variant="outlined" margin="normal" fullWidth name="password" label="Password" type={showPasswords.password ? "text" : "password"} id="password" autoComplete="new-password" value={formData.password} onChange={handleInputChange('password')} InputProps={{ endAdornment: (<InputAdornment position="end"><IconButton onClick={togglePasswordVisibility('password')} edge="end">{showPasswords.password ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment>) }} />
-              <TextField variant="outlined" margin="normal" fullWidth name="confirmPassword" label="Confirm Password" type={showPasswords.confirmPassword ? "text" : "password"} id="confirmPassword" autoComplete="new-password" value={formData.confirmPassword} onChange={handleInputChange('confirmPassword')} InputProps={{ endAdornment: (<InputAdornment position="end"><IconButton onClick={togglePasswordVisibility('confirmPassword')} edge="end">{showPasswords.confirmPassword ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment>) }} />
-              <Button fullWidth variant="contained" color="primary" onClick={handleSignUp} disabled={loading} style={{ marginTop: 20 }}>
+        <Paper elevation={24} sx={{ borderRadius: 4, overflow: 'hidden', backdropFilter: 'blur(10px)', background: 'rgba(255,255,255,0.95)' }}>
+          <Box sx={{ p: 4 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 4 }}>
+              <Typography variant="h4" sx={{ fontWeight: 'bold', background: 'linear-gradient(45deg, #2196F3, #21CBF3)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Analytics</Typography>
+              <Box component="img" src={logo} alt="Logo" sx={{ width: 48, height: 48, borderRadius: 2 }} />
+            </Box>
+            <Typography variant="h5" sx={{ textAlign: 'center', mb: 4, color: 'text.secondary', fontWeight: 500 }}>Create Account</Typography>
+            <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+              <TextField variant="outlined" fullWidth label="Username" value={formData.username} onChange={handleInputChange('username')} InputProps={{ startAdornment: <InputAdornment position="start"><Person sx={{ color: 'action.active' }} /></InputAdornment> }} sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
+              <TextField variant="outlined" fullWidth label="Email" type="email" value={formData.email} onChange={handleInputChange('email')} InputProps={{ startAdornment: <InputAdornment position="start"><Email sx={{ color: 'action.active' }} /></InputAdornment> }} sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
+              <TextField variant="outlined" fullWidth label="Password" type={showPasswords.password ? "text" : "password"} value={formData.password} onChange={handleInputChange('password')} InputProps={{ startAdornment: <InputAdornment position="start"><Lock sx={{ color: 'action.active' }} /></InputAdornment>, endAdornment: <InputAdornment position="end"><IconButton onClick={togglePasswordVisibility('password')} edge="end">{showPasswords.password ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment> }} sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
+              <TextField variant="outlined" fullWidth label="Confirm Password" type={showPasswords.confirmPassword ? "text" : "password"} value={formData.confirmPassword} onChange={handleInputChange('confirmPassword')} InputProps={{ startAdornment: <InputAdornment position="start"><Lock sx={{ color: 'action.active' }} /></InputAdornment>, endAdornment: <InputAdornment position="end"><IconButton onClick={togglePasswordVisibility('confirmPassword')} edge="end">{showPasswords.confirmPassword ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment> }} sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
+              <Button fullWidth variant="contained" onClick={handleSignUp} disabled={loading} sx={{ mt: 2, py: 1.5, borderRadius: 2, fontSize: '1.1rem', fontWeight: 600, background: 'linear-gradient(45deg, #2196F3, #21CBF3)', '&:hover': { background: 'linear-gradient(45deg, #1976D2, #0288D1)' } }}>
                 {loading ? "Creating Account..." : "Sign Up"}
               </Button>
-              <div className="mt-4 text-sm text-center">
-                <Typography variant="body2">
-                  Already have an account? <Link href="#" onClick={() => toggleForm("signin")}>Sign In</Link>
+              <Box sx={{ mt: 3, textAlign: 'center' }}>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  Already have an account? <Link href="#" onClick={() => toggleForm("signin")} sx={{ fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>Sign In</Link>
                 </Typography>
-              </div>
-            </form>
-          </div>
-        </div>
+              </Box>
+            </Box>
+          </Box>
+        </Paper>
       </Container>
-      <ToastContainer />
-    </div>
+      <ToastContainer position="top-right" theme="colored" />
+    </Box>
   );
 };
 
