@@ -16,56 +16,52 @@ import logo from "../assets/logo.png";
 import backgroundImage from "../assets/bg.jpg";
 
 const SignUp = ({ onSignUp, toggleForm }) => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: ""
+  });
+  const [showPasswords, setShowPasswords] = useState({ password: false, confirmPassword: false });
   const [loading, setLoading] = useState(false);
 
-  const validateEmail = (email) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validateForm = () => {
+    const { username, email, password, confirmPassword } = formData;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (!username.trim()) return "Username is required";
+    if (!email.trim() || !emailRegex.test(email)) return "Valid email is required";
+    if (password.length < 6) return "Password must be at least 6 characters";
+    if (password !== confirmPassword) return "Passwords do not match";
+    return null;
+  };
+
+  const handleInputChange = (field) => (e) => {
+    setFormData(prev => ({ ...prev, [field]: e.target.value }));
+  };
+
+  const togglePasswordVisibility = (field) => () => {
+    setShowPasswords(prev => ({ ...prev, [field]: !prev[field] }));
   };
 
   const handleSignUp = async () => {
-    if (!username.trim()) {
-      toast.error("Username is required");
-      return;
-    }
-    if (!email.trim() || !validateEmail(email)) {
-      toast.error("Valid email is required");
-      return;
-    }
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters");
-      return;
-    }
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
+    const error = validateForm();
+    if (error) {
+      toast.error(error);
       return;
     }
 
     setLoading(true);
     try {
+      const { username, email, password } = formData;
       await addUser(username.trim(), email.trim(), password);
       toast.success("Account created successfully!");
-      setTimeout(() => {
-        onSignUp(username.trim(), email.trim());
-      }, 1000);
+      setTimeout(() => onSignUp(username.trim(), email.trim()), 1000);
     } catch (error) {
-      toast.error(error.includes("unique") ? "Email already exists" : "Error creating account");
+      toast.error(error.message?.includes("unique") ? "Email already exists" : "Error creating account");
     } finally {
       setLoading(false);
     }
-  };
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const toggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword(!showConfirmPassword);
   };
 
   return (
@@ -103,8 +99,8 @@ const SignUp = ({ onSignUp, toggleForm }) => {
                 name="username"
                 autoComplete="username"
                 autoFocus
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={formData.username}
+                onChange={handleInputChange('username')}
               />
               <TextField
                 variant="outlined"
@@ -114,8 +110,8 @@ const SignUp = ({ onSignUp, toggleForm }) => {
                 label="Email"
                 name="email"
                 autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={formData.email}
+                onChange={handleInputChange('email')}
               />
               <TextField
                 variant="outlined"
@@ -123,16 +119,16 @@ const SignUp = ({ onSignUp, toggleForm }) => {
                 fullWidth
                 name="password"
                 label="Password"
-                type={showPassword ? "text" : "password"}
+                type={showPasswords.password ? "text" : "password"}
                 id="password"
                 autoComplete="new-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={formData.password}
+                onChange={handleInputChange('password')}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton onClick={togglePasswordVisibility} edge="end">
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      <IconButton onClick={togglePasswordVisibility('password')} edge="end">
+                        {showPasswords.password ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -144,23 +140,16 @@ const SignUp = ({ onSignUp, toggleForm }) => {
                 fullWidth
                 name="confirmPassword"
                 label="Confirm Password"
-                type={showConfirmPassword ? "text" : "password"}
+                type={showPasswords.confirmPassword ? "text" : "password"}
                 id="confirmPassword"
                 autoComplete="new-password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                value={formData.confirmPassword}
+                onChange={handleInputChange('confirmPassword')}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton
-                        onClick={toggleConfirmPasswordVisibility}
-                        edge="end"
-                      >
-                        {showConfirmPassword ? (
-                          <VisibilityOff />
-                        ) : (
-                          <Visibility />
-                        )}
+                      <IconButton onClick={togglePasswordVisibility('confirmPassword')} edge="end">
+                        {showPasswords.confirmPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
                   ),
