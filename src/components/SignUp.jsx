@@ -42,33 +42,198 @@ const SignUp = ({ onSignUp, toggleForm }) => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        padding: 2,
+      }}
+    >
       <Container maxWidth="sm">
-        <Paper elevation={24} sx={{ borderRadius: 4, overflow: 'hidden', backdropFilter: 'blur(10px)', background: 'rgba(255,255,255,0.95)' }}>
+        <Paper
+          elevation={24}
+          sx={{
+            borderRadius: 4,
+            overflow: 'hidden',
+            backdropFilter: 'blur(10px)',
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          }}
+        >
           <Box sx={{ p: 4 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 4 }}>
-              <Typography variant="h4" sx={{ fontWeight: 'bold', background: 'linear-gradient(45deg, #2196F3, #21CBF3)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Analytics</Typography>
-              <Box component="img" src={logo} alt="Logo" sx={{ width: 48, height: 48, borderRadius: 2 }} />
+            {/* Header */}
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+              <Typography variant="h5" sx={{ fontWeight: 600, color: 'primary.main' }}>
+                Analytics
+              </Typography>
+              <Box
+                component="img"
+                src={logo}
+                alt="Logo"
+                sx={{ width: 48, height: 48, borderRadius: 1 }}
+              />
             </Box>
-            <Typography variant="h5" sx={{ textAlign: 'center', mb: 4, color: 'text.secondary', fontWeight: 500 }}>Create Account</Typography>
-            <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-              <TextField variant="outlined" fullWidth label="Username" value={formData.username} onChange={handleInputChange('username')} InputProps={{ startAdornment: <InputAdornment position="start"><Person sx={{ color: 'action.active' }} /></InputAdornment> }} sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
-              <TextField variant="outlined" fullWidth label="Email" type="email" value={formData.email} onChange={handleInputChange('email')} InputProps={{ startAdornment: <InputAdornment position="start"><Email sx={{ color: 'action.active' }} /></InputAdornment> }} sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
-              <TextField variant="outlined" fullWidth label="Password" type={showPasswords.password ? "text" : "password"} value={formData.password} onChange={handleInputChange('password')} InputProps={{ startAdornment: <InputAdornment position="start"><Lock sx={{ color: 'action.active' }} /></InputAdornment>, endAdornment: <InputAdornment position="end"><IconButton onClick={togglePasswordVisibility('password')} edge="end">{showPasswords.password ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment> }} sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
-              <TextField variant="outlined" fullWidth label="Confirm Password" type={showPasswords.confirmPassword ? "text" : "password"} value={formData.confirmPassword} onChange={handleInputChange('confirmPassword')} InputProps={{ startAdornment: <InputAdornment position="start"><Lock sx={{ color: 'action.active' }} /></InputAdornment>, endAdornment: <InputAdornment position="end"><IconButton onClick={togglePasswordVisibility('confirmPassword')} edge="end">{showPasswords.confirmPassword ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment> }} sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
-              <Button fullWidth variant="contained" onClick={handleSignUp} disabled={loading} sx={{ mt: 2, py: 1.5, borderRadius: 2, fontSize: '1.1rem', fontWeight: 600, background: 'linear-gradient(45deg, #2196F3, #21CBF3)', '&:hover': { background: 'linear-gradient(45deg, #1976D2, #0288D1)' } }}>
-                {loading ? "Creating Account..." : "Sign Up"}
+
+            {/* Title */}
+            <Typography
+              variant="h4"
+              sx={{
+                textAlign: 'center',
+                fontWeight: 700,
+                mb: 4,
+                background: 'linear-gradient(45deg, #1976d2, #42a5f5)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              Create Account
+            </Typography>
+
+            {/* Form */}
+            <Box component="form" sx={{ mt: 2 }}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                label="Username"
+                value={formData.username}
+                onChange={handleInputChange('username')}
+                sx={{ mb: 2 }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Person color="action" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              <TextField
+                fullWidth
+                variant="outlined"
+                label="Email Address"
+                type="email"
+                value={formData.email}
+                onChange={handleInputChange('email')}
+                sx={{ mb: 2 }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Email color="action" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              <TextField
+                fullWidth
+                variant="outlined"
+                label="Password"
+                type={showPasswords.password ? 'text' : 'password'}
+                value={formData.password}
+                onChange={handleInputChange('password')}
+                sx={{ mb: 2 }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Lock color="action" />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={togglePasswordVisibility('password')} edge="end">
+                        {showPasswords.password ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              <TextField
+                fullWidth
+                variant="outlined"
+                label="Confirm Password"
+                type={showPasswords.confirmPassword ? 'text' : 'password'}
+                value={formData.confirmPassword}
+                onChange={handleInputChange('confirmPassword')}
+                sx={{ mb: 3 }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Lock color="action" />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={togglePasswordVisibility('confirmPassword')} edge="end">
+                        {showPasswords.confirmPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              <Button
+                fullWidth
+                variant="contained"
+                size="large"
+                onClick={handleSignUp}
+                disabled={loading}
+                sx={{
+                  py: 1.5,
+                  mb: 2,
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  fontSize: '1.1rem',
+                  fontWeight: 600,
+                  background: 'linear-gradient(45deg, #1976d2, #42a5f5)',
+                  '&:hover': {
+                    background: 'linear-gradient(45deg, #1565c0, #1976d2)',
+                  },
+                  '&:disabled': {
+                    background: 'rgba(0, 0, 0, 0.12)',
+                  },
+                }}
+              >
+                {loading ? 'Creating Account...' : 'Sign Up'}
               </Button>
-              <Box sx={{ mt: 3, textAlign: 'center' }}>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  Already have an account? <Link href="#" onClick={() => toggleForm("signin")} sx={{ fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>Sign In</Link>
+
+              <Box sx={{ textAlign: 'center', pt: 2, borderTop: '1px solid #e0e0e0' }}>
+                <Typography variant="body2" color="text.secondary">
+                  Already have an account?{' '}
+                  <Link
+                    component="button"
+                    onClick={() => toggleForm('signin')}
+                    sx={{
+                      fontWeight: 600,
+                      textDecoration: 'none',
+                      '&:hover': { textDecoration: 'underline' },
+                    }}
+                  >
+                    Sign In
+                  </Link>
                 </Typography>
               </Box>
             </Box>
           </Box>
         </Paper>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </Container>
-      <ToastContainer position="top-right" theme="colored" />
     </Box>
   );
 };

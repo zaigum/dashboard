@@ -7,10 +7,12 @@ import {
   Link,
   IconButton,
   InputAdornment,
+  Box,
+  Paper,
 } from "@mui/material";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Visibility, VisibilityOff, Email, Lock } from "@mui/icons-material";
 import logo from "../assets/logo.png";  
 import backgroundImage from "../assets/bg.jpg";  
 
@@ -48,110 +50,172 @@ const Login = ({ onLogin, toggleForm }) => {
   };
 
   return (
-    <div
-      className="w-screen h-screen flex justify-center items-center"
-      style={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: "cover",
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        padding: 2,
       }}
     >
-      <Container component="main" maxWidth="xs">
-        <div className="bg-white shadow-lg rounded-xl overflow-hidden">
-          <div className="p-4">
-            <div className="flex items-center font-semibold italic justify-between mb-8">
-              <Typography component="h1" variant="h6" className="text-center">
-                Analytics{" "}
+      <Container maxWidth="sm">
+        <Paper
+          elevation={24}
+          sx={{
+            borderRadius: 4,
+            overflow: 'hidden',
+            backdropFilter: 'blur(10px)',
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          }}
+        >
+          <Box sx={{ p: 4 }}>
+            {/* Header */}
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+              <Typography variant="h5" sx={{ fontWeight: 600, color: 'primary.main' }}>
+                Analytics
               </Typography>
-              <img src={logo} alt="Logo" className="w-12 h-12" />
-            </div>
+              <Box
+                component="img"
+                src={logo}
+                alt="Logo"
+                sx={{ width: 48, height: 48, borderRadius: 1 }}
+              />
+            </Box>
+
+            {/* Title */}
             <Typography
-              component="h2"
-              variant="h5"
-              className="text-center font-bold italic  mb-6"
-            >
-              Sign In{" "}
-            </Typography>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
+              variant="h4"
+              sx={{
+                textAlign: 'center',
+                fontWeight: 700,
+                mb: 4,
+                background: 'linear-gradient(45deg, #1976d2, #42a5f5)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
               }}
             >
-              <div style={{ width: "100%", padding: 20 }}>
-                <form style={{ width: "100%", marginTop: 1 }}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    id="email"
-                    label="Email"
-                    name="email"
-                    autoComplete="email"
-                    autoFocus
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
+              Welcome Back
+            </Typography>
 
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    name="password"
-                    label="Password"
-                    type={showPassword ? "text" : "password"}
-                    id="password"
-                    autoComplete="current-password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={togglePasswordVisibility}
-                            edge="end"
-                          >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
+            {/* Form */}
+            <Box component="form" sx={{ mt: 2 }}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                label="Email Address"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                autoFocus
+                sx={{ mb: 2 }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Email color="action" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
 
-                  <Button
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    onClick={handleLogin}
-                    style={{ marginTop: 20 }}
-                  >
-                    Sign In
-                  </Button>
+              <TextField
+                fullWidth
+                variant="outlined"
+                label="Password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                sx={{ mb: 3 }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Lock color="action" />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={togglePasswordVisibility} edge="end">
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              <Button
+                fullWidth
+                variant="contained"
+                size="large"
+                onClick={handleLogin}
+                sx={{
+                  py: 1.5,
+                  mb: 2,
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  fontSize: '1.1rem',
+                  fontWeight: 600,
+                  background: 'linear-gradient(45deg, #1976d2, #42a5f5)',
+                  '&:hover': {
+                    background: 'linear-gradient(45deg, #1565c0, #1976d2)',
+                  },
+                }}
+              >
+                Sign In
+              </Button>
+
+              <Box sx={{ textAlign: 'center', mb: 2 }}>
+                <Link
+                  component="button"
+                  variant="body2"
+                  onClick={() => console.log('Forgot Password clicked')}
+                  sx={{
+                    textDecoration: 'none',
+                    '&:hover': { textDecoration: 'underline' },
+                  }}
+                >
+                  Forgot your password?
+                </Link>
+              </Box>
+
+              <Box sx={{ textAlign: 'center', pt: 2, borderTop: '1px solid #e0e0e0' }}>
+                <Typography variant="body2" color="text.secondary">
+                  Don't have an account?{' '}
                   <Link
-                    href="#"
-                    variant="body2"
-                    style={{ marginTop: 10 }}
-                    onClick={() => console.log("Forgot Password clicked")}
+                    component="button"
+                    onClick={() => toggleForm('signin')}
+                    sx={{
+                      fontWeight: 600,
+                      textDecoration: 'none',
+                      '&:hover': { textDecoration: 'underline' },
+                    }}
                   >
-                    Forgot Password?
+                    Sign Up
                   </Link>
-                  <p className="mt-4 text-sm text-center">
-                    Don't have an account?{" "}
-                    <button
-                      onClick={() => toggleForm("signin")}
-                      className="text-blue-500"
-                    >
-                      Sign Up
-                    </button>
-                  </p>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-        <ToastContainer />
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+        </Paper>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </Container>
-    </div>
+    </Box>
   );
 };
 
